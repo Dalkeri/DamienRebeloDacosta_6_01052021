@@ -70,3 +70,75 @@ exports.getAllStuff = (req, res, next) => {
     }
   );
 };
+
+exports.like = (req, res, next) => {
+  Sauce.findOne({
+    _id: req.params.id
+  }).then(
+    (sauce) => {
+      console.log(sauce);
+      // if(sauce.usersLiked.includes(req.body.userIdFromToken)){
+      //   console.log("1");
+      //   if(!req.body.like){
+      //     console.log("11");
+      //     sauce.usersLiked.splice(req.body.userIdFromToken);
+      //   } else if (req.body.like == -1){
+      //     console.log("12");
+      //     sauce.usersLiked.splice(req.body.userIdFromToken);
+      //     sauce.usersDisliked.push(req.body.userIdFromToken);
+      //   }
+      // } else if(sauce.usersDisliked.includes(req.body.userIdFromToken)){
+      //   console.log("2");
+      //   if(!req.body.like){
+      //     console.log("21");
+      //     sauce.usersDisliked.splice(req.body.userIdFromToken);
+      //   } else if (req.body.like){
+      //     console.log("22");
+      //     sauce.usersDisliked.splice(req.body.userIdFromToken);
+      //     sauce.usersLiked.push(req.body.userIdFromToken);
+      //   }
+      // } else {
+        console.log("3", req.body);
+        if(req.body.like){
+          console.log("31");
+          sauce.usersLiked.push(req.body.userIdFromToken);
+        } else if(req.body.like == -1){
+          console.log("32");
+          sauce.usersDisliked.push(req.body.userIdFromToken);
+        }
+      // }
+      console.log(req.body);
+      console.log(sauce);
+    //   Sauce.updateOne(
+    //     { _id: req.params.id },
+    //     { 
+    //       $push: { usersLiked: req.body.userIdFromToken },
+    //       $inc:  { likes: 1} 
+    //     }
+    //  )
+    //  .then(
+    //   () => res.status(200).json({ message: 'like modifié !'})
+    //  )
+
+      // console.log("ici", sauce);
+      Sauce.updateOne({ _id: req.params.id }, { ...sauce })
+      .then(
+        () => res.status(200).json({ message: 'like modifié !'})
+       )
+      // res.status(200).json({ message: 'like modifié !'})
+    }
+  )
+  // .then(
+  //   (sauce) => {
+  //     Sauce.updateOne({ _id: req.params.id }, { ...sauce, _id: req.params.id })
+  //   }
+  // )
+  // .then(() => res.status(200).json({ message: 'like modifié !'}))
+  // .catch(
+  //   (error) => {
+  //     res.status(404).json({
+  //       error: error
+  //     });
+  //   }
+  // );
+};
