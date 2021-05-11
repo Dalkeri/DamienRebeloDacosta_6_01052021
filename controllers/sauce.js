@@ -98,33 +98,33 @@ exports.like = (req, res, next) => {
       //     sauce.usersLiked.push(req.body.userIdFromToken);
       //   }
       // } else {
-        console.log("3", req.body);
-        if(req.body.like){
-          console.log("31");
-          sauce.usersLiked.push(req.body.userIdFromToken);
-        } else if(req.body.like == -1){
-          console.log("32");
-          sauce.usersDisliked.push(req.body.userIdFromToken);
-        }
+        // console.log("3", req.body);
+        // if(req.body.like){
+        //   console.log("31");
+        //   sauce.usersLiked.push(req.body.userIdFromToken);
+        // } else if(req.body.like == -1){
+        //   console.log("32");
+        //   sauce.usersDisliked.push(req.body.userIdFromToken);
+        // }
       // }
       console.log(req.body);
       console.log(sauce);
-    //   Sauce.updateOne(
-    //     { _id: req.params.id },
-    //     { 
-    //       $push: { usersLiked: req.body.userIdFromToken },
-    //       $inc:  { likes: 1} 
-    //     }
-    //  )
-    //  .then(
-    //   () => res.status(200).json({ message: 'like modifié !'})
-    //  )
+      Sauce.updateOne(
+        { _id: req.params.id },
+        { 
+          $push: { usersLiked: req.body.userIdFromToken },
+          $inc:  { likes: 1} 
+        }
+     )
+     .then(
+      () => res.status(200).json({ message: 'like modifié !'})
+     )
 
       // console.log("ici", sauce);
-      Sauce.updateOne({ _id: req.params.id }, { ...sauce })
-      .then(
-        () => res.status(200).json({ message: 'like modifié !'})
-       )
+      // Sauce.updateOne({ _id: req.params.id }, { ...sauce })
+      // .then(
+      //   () => res.status(200).json({ message: 'like modifié !'})
+      //  )
       // res.status(200).json({ message: 'like modifié !'})
     }
   )
