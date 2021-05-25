@@ -1,27 +1,10 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
-var CryptoJS = require("crypto-js");
- var key = CryptoJS.enc.Hex.parse("000102030405060708090a0b0c0d0e0f");
-var iv = CryptoJS.enc.Hex.parse("101112131415161718191a1b1c1d1e1f");
+const CryptoJS = require("crypto-js");
 
-
-// Encrypt
-var ciphertext = CryptoJS.AES.encrypt('monSuperMDPTopSecret',key, { iv: iv }).toString();
-var ciphertext2 = CryptoJS.AES.encrypt('monSuperMDPTopSecret',key, { iv: iv }).toString();
-
-console.log("cryptage  : ", ciphertext);
-console.log("cryptage2 : ", ciphertext);
- 
-// Decrypt
-var bytes  = CryptoJS.AES.decrypt(ciphertext, key, { iv: iv });
-var bytes2  = CryptoJS.AES.decrypt(ciphertext2, key, { iv: iv });
-var originalText = bytes.toString(CryptoJS.enc.Utf8);
-var originalText2 = bytes2.toString(CryptoJS.enc.Utf8);
- 
-console.log("decryptage  : ", originalText);
-console.log("decryptage2 : ", originalText2);
-
+var key = CryptoJS.enc.Hex.parse(process.env.key);
+var iv  = CryptoJS.enc.Hex.parse(process.env.iv);
 
 const User = require('../models/User');
 
@@ -29,7 +12,7 @@ exports.signup = (req, res, next) => {
     bcrypt.hash(req.body.password, 10)
       .then(hash => {
         const user = new User({
-          email: req.body.email,
+          email: CryptoJS.AES.encrypt(req.body.email , key, { iv: iv }).toString(),
           password: hash
         });
         user.save()
@@ -40,7 +23,7 @@ exports.signup = (req, res, next) => {
   };
 
 exports.login = (req, res, next) => {
-  User.findOne({ email: req.body.email })
+  User.findOne({ email: CryptoJS.AES.encrypt(req.body.email , key, { iv: iv }).toString() })
     .then(user => {
       if (!user) {
         return res.status(401).json({ error: 'Utilisateur non trouvé !' });
