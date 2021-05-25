@@ -1,6 +1,28 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
+var CryptoJS = require("crypto-js");
+ var key = CryptoJS.enc.Hex.parse("000102030405060708090a0b0c0d0e0f");
+var iv = CryptoJS.enc.Hex.parse("101112131415161718191a1b1c1d1e1f");
+
+
+// Encrypt
+var ciphertext = CryptoJS.AES.encrypt('monSuperMDPTopSecret',key, { iv: iv }).toString();
+var ciphertext2 = CryptoJS.AES.encrypt('monSuperMDPTopSecret',key, { iv: iv }).toString();
+
+console.log("cryptage  : ", ciphertext);
+console.log("cryptage2 : ", ciphertext);
+ 
+// Decrypt
+var bytes  = CryptoJS.AES.decrypt(ciphertext, key, { iv: iv });
+var bytes2  = CryptoJS.AES.decrypt(ciphertext2, key, { iv: iv });
+var originalText = bytes.toString(CryptoJS.enc.Utf8);
+var originalText2 = bytes2.toString(CryptoJS.enc.Utf8);
+ 
+console.log("decryptage  : ", originalText);
+console.log("decryptage2 : ", originalText2);
+
+
 const User = require('../models/User');
 
 exports.signup = (req, res, next) => {

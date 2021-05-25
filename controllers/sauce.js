@@ -1,4 +1,5 @@
 const Sauce = require('../models/sauce');
+const fs = require('fs');
 
 exports.createSauce = (req, res, next) => {
   const sauceObject = JSON.parse(req.body.sauce);
@@ -42,20 +43,18 @@ exports.modifySauce = (req, res, next) => {
   };
 
 exports.deleteSauce = (req, res, next) => {
-  Sauce.deleteOne({_id: req.params.id}).then(
-    () => {
-      res.status(200).json({
-        message: 'Deleted!'
+  Sauce.findOne({ _id: req.params.id })
+    .then(sauce => {
+      const filename = sauce.imageUrl.split('/images/')[1];
+      fs.unlink(`images/${filename}`, () => {
+        Sauce.deleteOne({ _id: req.params.id })
+          .then(() => res.status(200).json({ message: 'Sauce supprimé !'}))
+          .catch(error => res.status(400).json({ error }));
       });
-    }
-  ).catch(
-    (error) => {
-      res.status(400).json({
-        error: error
-      });
-    }
-  );
+    })
+    .catch(error => res.status(500).json({ error }));
 };
+
 
 exports.getAllStuff = (req, res, next) => {
   Sauce.find().then(
@@ -78,6 +77,7 @@ exports.like = (req, res, next) => {
     (sauce) => {
       console.log(req.body);
       let operations = {};
+      
       if(sauce.usersLiked.includes(req.body.userIdFromToken)){
         if(!req.body.like){ 
           operations["$pull"] = { usersLiked: req.body.userIdFromToken }
@@ -99,11 +99,9 @@ exports.like = (req, res, next) => {
         }
       } else {
         if (req.body.like == -1) {
-          console.log("ICI");
           operations["$push"] = { usersDisliked: req.body.userIdFromToken }
           operations["$inc"] = { dislikes: 1}
         } else if(req.body.like){
-          console.log("LA");
           operations["$push"] = { usersLiked: req.body.userIdFromToken }
           operations["$inc"] = { likes: 1 }
         }
